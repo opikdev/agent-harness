@@ -18,14 +18,20 @@ It's an add-on for a repo you already have, not a project template.
 
 ## Quick start
 
-You need Bash, Git, and `jq`. Clone this repo, then point the installer at your project:
+You need Bash, Git, and `jq`. From your project, add the harness with [pik](https://github.com/opikdev/pik):
+
+```sh
+pik add agent-harness
+```
+
+Without pik, clone this repo and point the installer at your project:
 
 ```sh
 git clone https://github.com/opikdev/agent-harness
 agent-harness/install.sh path/to/your-repo
 ```
 
-The installer lists what it added and kept, turns on the pre-commit hook, and runs the check. Nothing is committed for you, so review the new files first.
+Both list what they added and kept, never overwrite your files, turn on the pre-commit hook, and run the check. Nothing is committed for you, so review the new files first. `pik add` also records the version in `.pik.yaml`, and `pik add agent-harness --dry-run` shows the changes without writing them.
 
 ## Usage
 

@@ -1,0 +1,13 @@
+schema: 1
+requires:
+  - name: git
+  - name: bash
+  - name: jq
+add:
+  from: template
+setup:
+  - bash .agents/check.sh
+next:
+  - Describe your project in docs/architecture.md, and add your commands to AGENTS.md
+check:
+  - bash .agents/check.sh

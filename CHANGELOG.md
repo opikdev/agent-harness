@@ -4,6 +4,10 @@ All notable changes to this repo are recorded here. The format follows [Keep a C
 
 ## [Unreleased]
 
+### Added
+
+- `pik.yaml`, so `pik add agent-harness` can add the harness to any repo.
+
 ## [0.1.0] - 2026-11-07
 
 ### Added
