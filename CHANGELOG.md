@@ -4,6 +4,8 @@ All notable changes to this repo are recorded here. The format follows [Keep a C
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-09
+
 ### Added
 
 - The check fails when the harness workflow is missing, doesn't run the pinned check, or pins a branch or partial tag, and when the pre-commit hook is missing, not executable, or doesn't run the check.
@@ -17,7 +19,7 @@ All notable changes to this repo are recorded here. The format follows [Keep a C
 ### Fixed
 
 - The check fails when `.claude/skills/<name>` is a copy that differs from `.agents/skills/<name>`. Before, any `SKILL.md` there passed. Identical copies still pass.
-- The harness workflow now runs the v0.2.0 check, not v0.1.0. A test fails when the pinned `ref` isn't the latest release in this changelog.
+- The harness workflow now runs the v0.3.0 check, not v0.1.0. A test fails when the pinned `ref` isn't the latest release in this changelog.
 
 ## [0.2.0] - 2026-11-08
 
