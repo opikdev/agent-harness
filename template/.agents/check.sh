@@ -74,6 +74,28 @@ check_skills() {
   done
 }
 
+check_enforcement() {
+  local workflow=.github/workflows/harness.yml hook=.githooks/pre-commit
+  if [[ ! -f $workflow ]]; then
+    error "$workflow is missing, so CI doesn't run the pinned check"
+  else
+    grep -qE '^ +repository: opikdev/agent-harness[[:space:]]*$' "$workflow" ||
+      error "$workflow must check out opikdev/agent-harness"
+    grep -qE '^ +ref: (v[0-9]+\.[0-9]+\.[0-9]+|[0-9a-f]{40})[[:space:]]*(#.*)?$' "$workflow" ||
+      error "$workflow must pin ref to a release tag such as v1.2.3, or a 40-character commit SHA"
+    grep -qE '^ +(- )?run: \.harness/template/\.agents/check\.sh ' "$workflow" ||
+      error "$workflow must run .harness/template/.agents/check.sh"
+  fi
+
+  if [[ ! -f $hook ]]; then
+    error "$hook is missing"
+  elif [[ ! -x $hook ]]; then
+    error "$hook must be executable, so run chmod +x $hook"
+  elif ! grep -q '\.agents/check\.sh' "$hook"; then
+    error "$hook must run .agents/check.sh"
+  fi
+}
+
 check_mcp_config() {
   if ! command -v jq >/dev/null; then
     error 'jq is required to check .mcp.json'
@@ -88,6 +110,7 @@ check_agent_files
 check_links
 check_decisions
 check_skills
+check_enforcement
 check_mcp_config
 
 if ((errors > 0)); then

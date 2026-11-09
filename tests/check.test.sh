@@ -64,6 +64,19 @@ expect_fail 'a skill with no description' 'needs a description' 'sed -i.bak "/^d
 expect_fail 'a skill with no Claude link' '.claude/skills/verify-change must link' 'rm .claude/skills/verify-change'
 expect_fail 'a broken Claude link' '.claude/skills/verify-change must link' 'rm .claude/skills/verify-change; ln -s ../../nowhere .claude/skills/verify-change'
 
+workflow_file=.github/workflows/harness.yml
+sha=0123456789abcdef0123456789abcdef01234567
+expect_fail 'a missing harness workflow' "$workflow_file is missing" "rm $workflow_file"
+expect_fail 'a workflow that fetches another repo' 'must check out opikdev/agent-harness' "sed -i.bak 's|opikdev/agent-harness|someone/fork|' $workflow_file; rm $workflow_file.bak"
+expect_fail 'a workflow pinned to a branch' 'must pin ref' "sed -i.bak 's/ref: .*/ref: main/' $workflow_file; rm $workflow_file.bak"
+expect_fail 'a workflow pinned to a major tag' 'must pin ref' "sed -i.bak 's/ref: .*/ref: v1/' $workflow_file; rm $workflow_file.bak"
+expect_fail 'a workflow pinned to a short SHA' 'must pin ref' "sed -i.bak 's/ref: .*/ref: 0123456/' $workflow_file; rm $workflow_file.bak"
+expect_pass 'a workflow pinned to a commit SHA' "sed -i.bak 's/ref: .*/ref: $sha # v1.2.3/' $workflow_file; rm $workflow_file.bak"
+expect_fail 'a workflow that runs the local check' 'must run .harness/template/.agents/check.sh' "sed -i.bak 's|run: .harness/template/|run: |' $workflow_file; rm $workflow_file.bak"
+expect_fail 'a missing pre-commit hook' '.githooks/pre-commit is missing' 'rm .githooks/pre-commit'
+expect_fail 'a pre-commit hook that is not executable' 'must be executable' 'chmod -x .githooks/pre-commit'
+expect_fail 'a pre-commit hook that skips the check' 'must run .agents/check.sh' 'printf "#!/bin/sh\nexit 0\n" >.githooks/pre-commit'
+
 expect_fail 'a missing .mcp.json' '.mcp.json is missing' 'rm .mcp.json'
 expect_fail 'invalid .mcp.json' 'must be JSON' 'echo "{" >.mcp.json'
 expect_fail '.mcp.json with no servers object' 'must be JSON' 'echo "{\"mcpServers\": []}" >.mcp.json'

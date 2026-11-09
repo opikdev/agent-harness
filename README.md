@@ -40,6 +40,7 @@ After installing, make the map yours:
 1. Describe your project in `docs/architecture.md`.
 2. Add your setup, run, and test commands to `AGENTS.md`.
 3. Commit the files.
+4. On GitHub, make the `harness` check required for your default branch, in a branch ruleset or branch protection rule. Otherwise a pull request that deletes the workflow still merges.
 
 Each new clone needs the hook turned on once:
 
