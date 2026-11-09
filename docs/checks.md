@@ -16,7 +16,7 @@ These rules can't catch a deleted workflow in CI, because a deleted workflow nev
 | Decisions | Each file has Status, Context, Decision, and Consequences fields |
 | Decisions | No two files share a number |
 | Skills | Each skill has a `SKILL.md` whose `name` matches its folder, plus a `description` |
-| Skills | Each skill is reachable at `.claude/skills/<name>/SKILL.md` |
+| Skills | `.claude/skills/<name>` links to `.agents/skills/<name>`, or is an identical copy of it, such as on Windows without symlinks |
 | Enforcement | `.github/workflows/harness.yml` exists, checks out `opikdev/agent-harness`, and runs its `template/.agents/check.sh` |
 | Enforcement | That checkout pins `ref` to a release tag (`vX.Y.Z`) or a 40-character commit SHA, never a branch or a partial tag such as `v1` |
 | Enforcement | `.githooks/pre-commit` exists, is executable, and runs `.agents/check.sh` |

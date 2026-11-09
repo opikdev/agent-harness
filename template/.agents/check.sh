@@ -70,7 +70,9 @@ check_skills() {
     fi
     grep -q "^name: $name$" "$dir/SKILL.md" || error "$dir/SKILL.md must set name: $name"
     grep -qE '^description: .+' "$dir/SKILL.md" || error "$dir/SKILL.md needs a description"
-    [[ -f .claude/skills/$name/SKILL.md ]] || error ".claude/skills/$name must link to $dir"
+    if [[ ! -f .claude/skills/$name/SKILL.md ]] || ! diff -rq "$dir" ".claude/skills/$name/" >/dev/null 2>&1; then
+      error ".claude/skills/$name must link to $dir, or be an identical copy of it"
+    fi
   done
 }
 

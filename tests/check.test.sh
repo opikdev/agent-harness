@@ -63,6 +63,9 @@ expect_fail 'a skill with the wrong name' 'must set name: verify-change' 'sed -i
 expect_fail 'a skill with no description' 'needs a description' 'sed -i.bak "/^description:/d" .agents/skills/verify-change/SKILL.md; rm .agents/skills/verify-change/SKILL.md.bak'
 expect_fail 'a skill with no Claude link' '.claude/skills/verify-change must link' 'rm .claude/skills/verify-change'
 expect_fail 'a broken Claude link' '.claude/skills/verify-change must link' 'rm .claude/skills/verify-change; ln -s ../../nowhere .claude/skills/verify-change'
+expect_pass 'a Claude skill that is an identical copy' 'rm .claude/skills/verify-change; cp -R .agents/skills/verify-change .claude/skills/verify-change'
+expect_fail 'a Claude skill copy that drifted' '.claude/skills/verify-change must link' 'rm .claude/skills/verify-change; cp -R .agents/skills/verify-change .claude/skills/verify-change; echo extra >>.claude/skills/verify-change/SKILL.md'
+expect_fail 'a Claude skill copy missing a file' '.claude/skills/verify-change must link' 'rm .claude/skills/verify-change; cp -R .agents/skills/verify-change .claude/skills/verify-change; echo notes >.agents/skills/verify-change/notes.md'
 
 workflow_file=.github/workflows/harness.yml
 sha=0123456789abcdef0123456789abcdef01234567

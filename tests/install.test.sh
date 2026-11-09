@@ -61,14 +61,17 @@ new_git_target
 echo '# Mine' >"$target/AGENTS.md"
 mkdir -p "$target/.claude/skills/verify-change"
 echo custom >"$target/.claude/skills/verify-change/SKILL.md"
-output=$("$root/install.sh" "$target" 2>&1)
+if output=$("$root/install.sh" "$target" 2>&1); then
+  fail 'a kept skill that differs from .agents/skills should fail the check'
+fi
 [[ $(cat "$target/AGENTS.md") == '# Mine' ]] || fail 'existing file was overwritten'
 [[ $(cat "$target/.claude/skills/verify-change/SKILL.md") == custom ]] || fail 'existing skill was overwritten'
 [[ $output == *'kept   AGENTS.md'* && $output == *'added  CLAUDE.md'* ]] || fail "got \"$output\""
+[[ $output == *'.claude/skills/verify-change must link'* ]] || fail "got \"$output\""
 pass 'keeps existing files and adds the rest'
 
 before=$(cd "$target" && find . -path ./.git -prune -o -type f -print | sort | xargs cat | shasum)
-"$root/install.sh" "$target" >/dev/null
+"$root/install.sh" "$target" >/dev/null 2>&1 || true
 after=$(cd "$target" && find . -path ./.git -prune -o -type f -print | sort | xargs cat | shasum)
 [[ $before == "$after" ]] || fail 'second install changed files'
 pass 'is safe to run twice'
