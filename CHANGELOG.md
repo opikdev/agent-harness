@@ -8,6 +8,7 @@ All notable changes to this repo are recorded here. The format follows [Keep a C
 
 - The check fails when the harness workflow is missing, doesn't run the pinned check, or pins a branch or partial tag, and when the pre-commit hook is missing, not executable, or doesn't run the check.
 - The README tells you to make the `harness` check required.
+- The check reference says the hook checks the working tree, not the staged files, and doesn't run your project's lint or tests.
 
 ### Fixed
 

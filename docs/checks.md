@@ -4,7 +4,7 @@
 
 The pre-commit hook runs the local copy for fast feedback. CI runs a pinned release of the check from this repo, so editing the local copy can't get a change past CI.
 
-These rules can't catch a deleted workflow in CI, because a deleted workflow never runs. Make the `harness` job a required status check on your default branch, so a pull request that removes or renames it can't merge.
+## Rules
 
 | Area | Rule |
 |---|---|
@@ -21,3 +21,10 @@ These rules can't catch a deleted workflow in CI, because a deleted workflow nev
 | Enforcement | That checkout pins `ref` to a release tag (`vX.Y.Z`) or a 40-character commit SHA, never a branch or a partial tag such as `v1` |
 | Enforcement | `.githooks/pre-commit` exists, is executable, and runs `.agents/check.sh` |
 | MCP | `.mcp.json` is JSON with an `mcpServers` object |
+
+## Limits
+
+- The hook runs only `.agents/check.sh`, not your project's lint, type checks, or tests. Run those in CI.
+- The hook checks your working tree, not what you staged. An unstaged fix can let a broken commit through, and an unstaged break can block a good one. CI checks the committed files, so it catches what the hook misses.
+- Checking the staged snapshot would mean copying the whole index on each commit, which is slow in large repos and runs filters such as Git LFS, so the hook doesn't.
+- The rules can't catch a deleted workflow in CI, because a deleted workflow never runs. Make the `harness` job a required status check on your default branch, so a pull request that removes or renames it can't merge. See the [README](../README.md#usage).
