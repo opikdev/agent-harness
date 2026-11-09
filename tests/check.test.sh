@@ -7,7 +7,7 @@ adr=docs/decisions/000-adopt-agent-harness.md
 fresh() {
   cd "$sandbox"
   new_target
-  "$root/install.sh" "$target" >/dev/null
+  cp -R "$root/template/." "$target"
   cd "$target"
 }
 
