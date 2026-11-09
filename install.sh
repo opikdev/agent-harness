@@ -13,6 +13,8 @@ if [[ ! -d $1 ]]; then
 fi
 target=$(cd "$1" && pwd -P)
 
+echo 'install.sh is deprecated and will be removed in a future release. Run pik add agent-harness instead, which also records the version in .pik.yaml for pik update.' >&2
+
 while IFS= read -r path; do
   if [[ -e $target/$path || -L $target/$path ]]; then
     echo "kept   $path"

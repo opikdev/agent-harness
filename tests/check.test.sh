@@ -7,7 +7,7 @@ adr=docs/decisions/000-adopt-agent-harness.md
 fresh() {
   cd "$sandbox"
   new_target
-  "$root/install.sh" "$target" >/dev/null
+  cp -R "$root/template/." "$target"
   cd "$target"
 }
 
@@ -63,6 +63,22 @@ expect_fail 'a skill with the wrong name' 'must set name: verify-change' 'sed -i
 expect_fail 'a skill with no description' 'needs a description' 'sed -i.bak "/^description:/d" .agents/skills/verify-change/SKILL.md; rm .agents/skills/verify-change/SKILL.md.bak'
 expect_fail 'a skill with no Claude link' '.claude/skills/verify-change must link' 'rm .claude/skills/verify-change'
 expect_fail 'a broken Claude link' '.claude/skills/verify-change must link' 'rm .claude/skills/verify-change; ln -s ../../nowhere .claude/skills/verify-change'
+expect_pass 'a Claude skill that is an identical copy' 'rm .claude/skills/verify-change; cp -R .agents/skills/verify-change .claude/skills/verify-change'
+expect_fail 'a Claude skill copy that drifted' '.claude/skills/verify-change must link' 'rm .claude/skills/verify-change; cp -R .agents/skills/verify-change .claude/skills/verify-change; echo extra >>.claude/skills/verify-change/SKILL.md'
+expect_fail 'a Claude skill copy missing a file' '.claude/skills/verify-change must link' 'rm .claude/skills/verify-change; cp -R .agents/skills/verify-change .claude/skills/verify-change; echo notes >.agents/skills/verify-change/notes.md'
+
+workflow_file=.github/workflows/harness.yml
+sha=0123456789abcdef0123456789abcdef01234567
+expect_fail 'a missing harness workflow' "$workflow_file is missing" "rm $workflow_file"
+expect_fail 'a workflow that fetches another repo' 'must check out opikdev/agent-harness' "sed -i.bak 's|opikdev/agent-harness|someone/fork|' $workflow_file; rm $workflow_file.bak"
+expect_fail 'a workflow pinned to a branch' 'must pin ref' "sed -i.bak 's/ref: .*/ref: main/' $workflow_file; rm $workflow_file.bak"
+expect_fail 'a workflow pinned to a major tag' 'must pin ref' "sed -i.bak 's/ref: .*/ref: v1/' $workflow_file; rm $workflow_file.bak"
+expect_fail 'a workflow pinned to a short SHA' 'must pin ref' "sed -i.bak 's/ref: .*/ref: 0123456/' $workflow_file; rm $workflow_file.bak"
+expect_pass 'a workflow pinned to a commit SHA' "sed -i.bak 's/ref: .*/ref: $sha # v1.2.3/' $workflow_file; rm $workflow_file.bak"
+expect_fail 'a workflow that runs the local check' 'must run .harness/template/.agents/check.sh' "sed -i.bak 's|run: .harness/template/|run: |' $workflow_file; rm $workflow_file.bak"
+expect_fail 'a missing pre-commit hook' '.githooks/pre-commit is missing' 'rm .githooks/pre-commit'
+expect_fail 'a pre-commit hook that is not executable' 'must be executable' 'chmod -x .githooks/pre-commit'
+expect_fail 'a pre-commit hook that skips the check' 'must run .agents/check.sh' 'printf "#!/bin/sh\nexit 0\n" >.githooks/pre-commit'
 
 expect_fail 'a missing .mcp.json' '.mcp.json is missing' 'rm .mcp.json'
 expect_fail 'invalid .mcp.json' 'must be JSON' 'echo "{" >.mcp.json'
@@ -89,6 +105,9 @@ pass 'a pinned check run against the repo ignores a weakened local copy'
 
 workflow="$root/template/.github/workflows/harness.yml"
 grep -q 'repository: opikdev/agent-harness' "$workflow" || fail 'workflow does not fetch the pinned harness'
-grep -q 'ref: v[0-9]' "$workflow" || fail 'workflow does not pin a release'
+latest=$(grep -m 1 -oE '^## \[[0-9]+\.[0-9]+\.[0-9]+\]' "$root/CHANGELOG.md")
+latest=${latest#'## ['}
+latest=${latest%]}
+grep -qE "^ +ref: v$latest$" "$workflow" || fail "workflow does not pin v$latest, the latest release in CHANGELOG.md"
 grep -q 'run: .harness/template/.agents/check.sh "' "$workflow" || fail 'workflow runs the local check'
-pass 'CI runs the pinned check, not the local copy'
+pass 'CI runs the check pinned to the latest release, not the local copy'
