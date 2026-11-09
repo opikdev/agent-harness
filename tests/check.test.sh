@@ -89,6 +89,9 @@ pass 'a pinned check run against the repo ignores a weakened local copy'
 
 workflow="$root/template/.github/workflows/harness.yml"
 grep -q 'repository: opikdev/agent-harness' "$workflow" || fail 'workflow does not fetch the pinned harness'
-grep -q 'ref: v[0-9]' "$workflow" || fail 'workflow does not pin a release'
+latest=$(grep -m 1 -oE '^## \[[0-9]+\.[0-9]+\.[0-9]+\]' "$root/CHANGELOG.md")
+latest=${latest#'## ['}
+latest=${latest%]}
+grep -qE "^ +ref: v$latest$" "$workflow" || fail "workflow does not pin v$latest, the latest release in CHANGELOG.md"
 grep -q 'run: .harness/template/.agents/check.sh "' "$workflow" || fail 'workflow runs the local check'
-pass 'CI runs the pinned check, not the local copy'
+pass 'CI runs the check pinned to the latest release, not the local copy'

@@ -4,6 +4,10 @@ All notable changes to this repo are recorded here. The format follows [Keep a C
 
 ## [Unreleased]
 
+### Fixed
+
+- The harness workflow now runs the v0.2.0 check, not v0.1.0. A test fails when the pinned `ref` isn't the latest release in this changelog.
+
 ## [0.2.0] - 2026-11-08
 
 ### Added
