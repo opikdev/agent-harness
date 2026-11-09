@@ -4,7 +4,7 @@ Adds a project map, agent skills, and enforced checks to any repo. This repo is 
 
 | Path | Purpose |
 |---|---|
-| `install.sh` | Copies `template/` into a target repo |
+| `install.sh` | Deprecated installer that copies `template/` into a target repo |
 | `template/` | The files a target repo receives |
 | `tests/` | Tests for the installer and the installed check |
 | `docs/` | [Check reference](docs/checks.md) and [decisions](docs/decisions/) |

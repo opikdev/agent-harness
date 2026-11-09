@@ -23,6 +23,12 @@ output=$("$root/install.sh" "$target")
 [[ $output == *'Next: describe your project'* ]] || fail "got \"$output\""
 pass 'installs into an empty repo and its checks pass'
 
+new_git_target
+warning=$("$root/install.sh" "$target" 2>&1 >/dev/null)
+[[ $warning == *'install.sh is deprecated'*'pik add agent-harness'* ]] || fail "got \"$warning\""
+[[ ! -e $target/.pik.yaml ]] || fail 'install.sh wrote .pik.yaml'
+pass 'warns that it is deprecated in favor of pik add, and writes no .pik.yaml'
+
 for path in AGENTS.md CLAUDE.md .mcp.json docs/architecture.md docs/decisions/000-adopt-agent-harness.md \
   .agents/skills/record-decision/SKILL.md .agents/skills/verify-change/SKILL.md \
   .githooks/pre-commit .github/workflows/harness.yml; do

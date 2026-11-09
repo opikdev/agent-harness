@@ -10,6 +10,10 @@ All notable changes to this repo are recorded here. The format follows [Keep a C
 - The README tells you to make the `harness` check required.
 - The check reference says the hook checks the working tree, not the staged files, and doesn't run your project's lint or tests.
 
+### Deprecated
+
+- `install.sh`, which writes no `.pik.yaml` record. It now warns and points to `pik add agent-harness`, and will be removed in a later release.
+
 ### Fixed
 
 - The check fails when `.claude/skills/<name>` is a copy that differs from `.agents/skills/<name>`. Before, any `SKILL.md` there passed. Identical copies still pass.

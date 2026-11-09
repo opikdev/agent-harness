@@ -24,14 +24,9 @@ You need Bash, Git, and `jq`. From your project, add the harness with [pik](http
 pik add agent-harness
 ```
 
-Without pik, clone this repo and point the installer at your project:
+It lists what it added and kept, never overwrites your files, turns on the pre-commit hook, records the version in `.pik.yaml`, and runs the check. Nothing is committed for you, so review the new files first. `pik add agent-harness --dry-run` shows the changes without writing them.
 
-```sh
-git clone https://github.com/opikdev/agent-harness
-agent-harness/install.sh path/to/your-repo
-```
-
-Both list what they added and kept, never overwrite your files, turn on the pre-commit hook, and run the check. Nothing is committed for you, so review the new files first. `pik add` also records the version in `.pik.yaml`, and `pik add agent-harness --dry-run` shows the changes without writing them.
+`install.sh` in this repo does the same without the `.pik.yaml` record, so `pik update` can't find it. It's deprecated and will be removed, so use `pik add`. See [ADR 005](docs/decisions/005-deprecate-install-sh-for-pik-add.md).
 
 ## Usage
 
@@ -62,7 +57,7 @@ To work on the harness itself, run `scripts/check.sh`. It also needs `actionlint
 
 | Path | Purpose |
 |---|---|
-| `install.sh` | Copies `template/` into a target repo |
+| `install.sh` | Deprecated installer that copies `template/` into a target repo |
 | `template/` | The files a target repo receives |
 | `tests/` | Tests for the installer and the installed check |
 | `docs/` | Check reference and decisions |
